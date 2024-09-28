@@ -80,7 +80,7 @@ jobs:
         echo "IPs externos dos serviços:"
         kubectl get services -o wide | grep LoadBalancer
           
-        WEBSERVER_IP=$(kubectl get service service-webserver -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+        WEBSERVER_IP=$(kubectl get service svc-webserver -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
         echo "IP externo do Webserver: $WEBSERVER_IP"
           
         if [ -n "$WEBSERVER_IP" ]; then
@@ -88,6 +88,3 @@ jobs:
         else
           echo "Não foi possível obter o IP externo do Webserver"
         fi
-
-    outputs:
-      webserver_ip: ${{ steps.mostrar_ip.outputs.webserver_ip }}
