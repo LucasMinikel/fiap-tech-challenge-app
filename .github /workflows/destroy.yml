@@ -1,0 +1,49 @@
+name: Destroy Infrastructure
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Digite "DESTROY" para confirmar a destruição da infraestrutura'
+        required: true
+
+env:
+  AWS_REGION: sa-east-1
+  CLUSTER_NAME: tech-challenge-cluster
+
+jobs:
+  destroy:
+    runs-on: ubuntu-latest
+    if: github.event.inputs.confirm == 'DESTROY'
+
+    steps:
+    - name: Checkout do repositório
+      uses: actions/checkout@v2
+
+    - name: Configurar AWS CLI
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Atualizar configuração do Kube
+      run: aws eks update-kubeconfig --name ${{ env.CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
+
+    - name: Remover recursos Kubernetes
+      run: |
+        kubectl delete -f k8s/webserver --ignore-not-found
+        kubectl delete -f k8s/fpm --ignore-not-found
+        kubectl delete -f k8s/common --ignore-not-found
+
+    - name: Remover secrets
+      run: |
+        kubectl delete secret secret-common --ignore-not-found
+
+    - name: Verificar remoção dos recursos
+      run: |
+        kubectl get all
+        kubectl get secrets
+
+    - name: Aviso de conclusão
+      run: echo "Destruição concluída. Verifique se todos os recursos foram removidos corretamente."
