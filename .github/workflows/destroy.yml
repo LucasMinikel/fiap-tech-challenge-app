@@ -32,9 +32,9 @@ jobs:
 
     - name: Remover recursos Kubernetes
       run: |
-        kubectl delete -f k8s/webserver --ignore-not-found
-        kubectl delete -f k8s/fpm --ignore-not-found
-        kubectl delete -f k8s/common --ignore-not-found
+        kubectl delete -f .infra/k8s/webserver --ignore-not-found
+        kubectl delete -f .infra/k8s/fpm --ignore-not-found
+        kubectl delete -f .infra/k8s/common --ignore-not-found
 
     - name: Remover secrets
       run: |

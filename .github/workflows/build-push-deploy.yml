@@ -74,3 +74,20 @@ jobs:
       run: |
         kubectl rollout status deployment/deployment-fpm
         kubectl rollout status deployment/deployment-webserver
+
+    - name: IP externo
+      run: |
+        echo "IPs externos dos serviços:"
+        kubectl get services -o wide | grep LoadBalancer
+          
+        WEBSERVER_IP=$(kubectl get service service-webserver -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+        echo "IP externo do Webserver: $WEBSERVER_IP"
+          
+        if [ -n "$WEBSERVER_IP" ]; then
+          echo "webserver_ip=$WEBSERVER_IP" >> $GITHUB_OUTPUT
+        else
+          echo "Não foi possível obter o IP externo do Webserver"
+        fi
+
+    outputs:
+      webserver_ip: ${{ steps.mostrar_ip.outputs.webserver_ip }}
