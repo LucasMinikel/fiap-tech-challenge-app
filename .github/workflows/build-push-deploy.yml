@@ -34,12 +34,18 @@ jobs:
 
     - name: Build e push das imagens Docker
       env:
-        IMAGE_TAG: v0.0.1
+        IMAGE_TAG: ${{ github.sha }}
       run: |
-        docker build -f .infra/docker/Dockerfile . --target fpm_server -t ${{ secrets.DOCKER_USERNAME }}/${{ env.FPM_IMAGE_NAME }}:$IMAGE_TAG
-        docker push ${{ secrets.DOCKER_USERNAME }}/${{ env.FPM_IMAGE_NAME }}:$IMAGE_TAG
-        docker build -f .infra/docker/Dockerfile . --target web_server -t ${{ secrets.DOCKER_USERNAME }}/${{ env.WEBSERVER_IMAGE_NAME }}:$IMAGE_TAG
-        docker push ${{ secrets.DOCKER_USERNAME }}/${{ env.WEBSERVER_IMAGE_NAME }}:$IMAGE_TAG
+        FPM_IMAGE=${{ secrets.DOCKER_USERNAME }}/${{ env.FPM_IMAGE_NAME }}:$IMAGE_TAG
+        WEBSERVER_IMAGE=${{ secrets.DOCKER_USERNAME }}/${{ env.WEBSERVER_IMAGE_NAME }}:$IMAGE_TAG
+        
+        docker build -f .infra/docker/Dockerfile . --target fpm_server -t $FPM_IMAGE
+        docker push $FPM_IMAGE
+        docker build -f .infra/docker/Dockerfile . --target web_server -t $WEBSERVER_IMAGE
+        docker push $WEBSERVER_IMAGE
+        
+        echo "FPM_IMAGE=$FPM_IMAGE" >> $GITHUB_ENV
+        echo "WEBSERVER_IMAGE=$WEBSERVER_IMAGE" >> $GITHUB_ENV
 
     - name: Secrets Manager
       id: secrets
@@ -67,6 +73,8 @@ jobs:
 
     - name: Deploy k8s
       run: |
+        sed -i 's|{$image_fpm_server}|'$FPM_IMAGE'|g' .infra/k8s/fpm/deployment.yaml
+        sed -i 's|{$image_webserver}|'$WEBSERVER_IMAGE'|g' .infra/k8s/webserver/deployment.yaml
         kubectl apply -f .infra/k8s/fpm
         kubectl apply -f .infra/k8s/webserver
 
