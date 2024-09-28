@@ -19,7 +19,7 @@ spec:
     spec:
       initContainers:
       - name: migrations
-        image: {$image_fpm_server: ''}
+        image: {$image_fpm_server}
         command:
         - php
         args:
@@ -33,7 +33,7 @@ spec:
             name: secret-common
       containers:
       - name: fpm
-        image: {$image_fpm_server: ''}
+        image: {$image_fpm_server}
         imagePullPolicy: Always
         ports:
         - containerPort: 9000

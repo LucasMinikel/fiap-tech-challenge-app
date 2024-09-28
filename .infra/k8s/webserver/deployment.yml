@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: webserver
-        image: {$image_webserver: ''}
+        image: {$image_webserver}
         imagePullPolicy: Always
         ports:
         - containerPort: 80
