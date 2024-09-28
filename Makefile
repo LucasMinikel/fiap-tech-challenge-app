@@ -123,15 +123,11 @@ docker-prod: docker-build-prod docker-push-prod
 
 docker-build-prod: ## Build das imagens Docker para produção
 	@cp $(DOCKERIGNORE_FILE) .dockerignore
-	docker build -f $(DOCKERFILE_PATH) . --target cli -t ${REGISTRY}/cli:${VERSION}
-	docker build -f $(DOCKERFILE_PATH) . --target cron -t ${REGISTRY}/cron:${VERSION}
 	docker build -f $(DOCKERFILE_PATH) . --target fpm_server -t ${REGISTRY}/fpm_server:${VERSION}
 	docker build -f $(DOCKERFILE_PATH) . --target web_server -t ${REGISTRY}/web_server:${VERSION}
 	@mv .dockerignore $(DOCKERIGNORE_FILE)
 
 docker-push-prod: ## Push das imagens Docker para produção
-	docker push ${REGISTRY}/cli:${VERSION}
-	docker push ${REGISTRY}/cron:${VERSION}
 	docker push ${REGISTRY}/fpm_server:${VERSION}
 	docker push ${REGISTRY}/web_server:${VERSION}
 
@@ -140,17 +136,10 @@ docker-push-prod: ## Push das imagens Docker para produção
 
 kubectl-deploy-apply: ## Deploy Apply
 	kubectl apply -f .infra/k8s/common
-	kubectl apply -f .infra/k8s/cache
-	kubectl apply -f .infra/k8s/database
 	kubectl apply -f .infra/k8s/fpm
 	kubectl apply -f .infra/k8s/webserver
-	kubectl apply -f .infra/k8s/queue-workers
-	kubectl apply -f .infra/k8s/cronjob
 
 kubectl-deploy-delete: ## Deploy Delete
 	kubectl delete -f .infra/k8s/common
-	kubectl delete -f .infra/k8s/cache
-	kubectl delete -f .infra/k8s/database
 	kubectl delete -f .infra/k8s/fpm
-	kubectl delete -f .infra/k8s/queue-workers
-	kubectl delete -f .infra/k8s/cronjob
+	kubectl delete -f .infra/k8s/webserver

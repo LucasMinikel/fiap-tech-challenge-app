@@ -20,15 +20,6 @@ services:
     networks:
       - projeto
 
-  laravel.cron:
-    build:
-      context: .
-      dockerfile: .infra/docker/Dockerfile
-      target: cron
-    env_file: ".env"
-    networks:
-      - projeto
-
   redis:
     image: redis:latest
     networks:
