@@ -20,6 +20,7 @@ spec:
       containers:
       - name: webserver
         image: lucasminikel/web_server:v0.0.1
+        imagePullPolicy: Always
         ports:
         - containerPort: 80
         env:
