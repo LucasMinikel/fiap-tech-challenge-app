@@ -5,10 +5,6 @@ RUN composer install --prefer-dist --no-dev --no-scripts --no-progress --no-inte
 
 FROM php:8.3-fpm-alpine AS fpm_server
 RUN docker-php-ext-install pdo pdo_mysql
-RUN apk --no-cache add pcre-dev ${PHPIZE_DEPS} \
-    && pecl install redis \
-    && docker-php-ext-enable redis \
-    && apk del pcre-dev ${PHPIZE_DEPS}
 WORKDIR /opt/apps/projeto
 COPY --from=composer /opt/apps/projeto /opt/apps/projeto
 RUN mkdir -p /opt/apps/projeto/bootstrap/cache && \
