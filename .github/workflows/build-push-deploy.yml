@@ -53,7 +53,6 @@ jobs:
       with:
         secret-ids: |
           MY_AWS_SECRET
-          tech-challenge-cognito-api-url
         parse-json-secrets: true
 
     - name: Atualizar configuração do Kube
@@ -61,7 +60,7 @@ jobs:
 
     - name: Deploy common
       run: |
-        kubectl apply -f .infra/k8s/common
+        kubectl apply -f .infra/k8s/common --validate=false
 
     - name: Criar ou Atualizar Secrets no Kubernetes
       run: |
@@ -70,7 +69,6 @@ jobs:
           --from-literal=DB_USERNAME=${{ env.MY_AWS_SECRET_DB_USERNAME }} \
           --from-literal=DB_PASSWORD=${{ env.MY_AWS_SECRET_DB_PASSWORD }} \
           --from-literal=DB_DATABASE=${{ env.MY_AWS_SECRET_DB_DATABASE }} \
-          --from-literal=COGNITO_API_URL=${{ env.TECH_CHALLENGE_COGNITO_API_URL }} \
           --dry-run=client -o yaml | kubectl apply -f -
 
     - name: Deploy k8s
