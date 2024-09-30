@@ -33,14 +33,26 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    # - name: Secrets Manager
-    #   id: secrets
-    #   uses: aws-actions/aws-secretsmanager-get-secrets@v2
-    #   with:
-    #     secret-ids: |
-    #       db_rds_secrets
-    #       tech-challenge-cognito-api-url
-    #     parse-json-secrets: true
+    - name: Build e push das imagens Docker
+      env:
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        FPM_IMAGE=${{ secrets.DOCKER_USERNAME }}/${{ env.FPM_IMAGE_NAME }}:$IMAGE_TAG
+        WEBSERVER_IMAGE=${{ secrets.DOCKER_USERNAME }}/${{ env.WEBSERVER_IMAGE_NAME }}:v0.0.1
+        docker build -f .infra/docker/Dockerfile . --target fpm_server -t $FPM_IMAGE
+        docker build -f .infra/docker/Dockerfile . --target web_server -t $WEBSERVER_IMAGE
+        docker push $FPM_IMAGE
+        docker push $WEBSERVER_IMAGE
+        echo "FPM_IMAGE=$FPM_IMAGE" >> $GITHUB_ENV
+        echo "WEBSERVER_IMAGE=$WEBSERVER_IMAGE" >> $GITHUB_ENV
+    - name: Secrets Manager
+      id: secrets
+      uses: aws-actions/aws-secretsmanager-get-secrets@v2
+      with:
+        secret-ids: |
+          db_secrets_rds_mysql
+          tech-challenge-cognito-api-url
+        parse-json-secrets: true
 
     - name: Atualizar configuração do Kube
       run: aws eks update-kubeconfig --name ${{ env.CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
@@ -48,28 +60,26 @@ jobs:
     - name: Deploy common
       run: |
         kubectl apply -f .infra/k8s/common
-
-    # - name: Criar ou Atualizar Secrets no Kubernetes
-    #   run: |
-    #     kubectl create secret generic secret-common \
-    #       --from-literal=DB_HOST=${{ env.DB_RDS_SECRETS_DB_HOST }} \
-    #       --from-literal=DB_PORT=${{ env.DB_RDS_SECRETS_DB_PORT }} \
-    #       --from-literal=DB_USERNAME=${{ env.DB_RDS_SECRETS_DB_USERNAME }} \
-    #       --from-literal=DB_PASSWORD=${{ env.DB_RDS_SECRETS_DB_PASSWORD }} \
-    #       --from-literal=DB_DATABASE=${{ env.DB_RDS_SECRETS_DB_DATABASE }} \
-    #       --from-literal=COGNITO_API_URL=${{ env.TECH_CHALLENGE_COGNITO_API_URL }} \
-    #       --dry-run=client -o yaml | kubectl apply -f -
-
+    - name: Criar ou Atualizar Secrets no Kubernetes
+      run: |
+        kubectl create secret generic secret-common \
+          --from-literal=DB_HOST=${{ env.DB_SECRETS_RDS_MYSQL_DB_HOST }} \
+          --from-literal=DB_PORT=${{ env.DB_SECRETS_RDS_MYSQL_DB_PORT }} \
+          --from-literal=DB_USERNAME=${{ env.DB_SECRETS_RDS_MYSQL_DB_USERNAME }} \
+          --from-literal=DB_PASSWORD=${{ env.DB_SECRETS_RDS_MYSQL_DB_PASSWORD }} \
+          --from-literal=DB_DATABASE=${{ env.DB_SECRETS_RDS_MYSQL_DB_DATABASE }} \
+          --from-literal=COGNITO_API_URL=${{ env.TECH_CHALLENGE_COGNITO_API_URL }} \
+          --dry-run=client -o yaml | kubectl apply -f -
     - name: Deploy k8s
       run: |
+        sed -i 's|{$image_fpm_server}|'$FPM_IMAGE'|g' .infra/k8s/fpm/deployment.yml
+        sed -i 's|{$image_webserver}|'$WEBSERVER_IMAGE'|g' .infra/k8s/webserver/deployment.yml
         kubectl apply -f .infra/k8s/fpm
         kubectl apply -f .infra/k8s/webserver
-
     - name: Verificar rollout
       run: |
         kubectl rollout status deployment/deployment-fpm
         kubectl rollout status deployment/deployment-webserver
-
     - name: IP externo
       run: |
         echo "IPs externos dos serviços:"
