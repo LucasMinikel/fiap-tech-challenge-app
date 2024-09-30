@@ -75,15 +75,15 @@ jobs:
 
     - name: Deploy k8s
       run: |
-        sed -i 's|{$image_fpm_server}|'$FPM_IMAGE'|g' .infra/k8s/fpm/deployment.yml
         sed -i 's|{$image_webserver}|'$WEBSERVER_IMAGE'|g' .infra/k8s/webserver/deployment.yml
-        kubectl apply -f .infra/k8s/fpm
+        sed -i 's|{$image_fpm_server}|'$FPM_IMAGE'|g' .infra/k8s/fpm/deployment.yml
         kubectl apply -f .infra/k8s/webserver
+        kubectl apply -f .infra/k8s/fpm
 
     - name: Verificar rollout
       run: |
-        kubectl rollout status deployment/deployment-fpm
         kubectl rollout status deployment/deployment-webserver
+        kubectl rollout status deployment/deployment-fpm
 
     - name: IP externo
       run: |
