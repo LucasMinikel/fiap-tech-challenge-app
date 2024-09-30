@@ -33,15 +33,6 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: WEBSERVER_IMAGE - Build e push das imagens Docker
-      env:
-        IMAGE_TAG: ${{ github.sha }}
-      run: |
-        FPM_IMAGE=${{ secrets.DOCKER_USERNAME }}/${{ env.FPM_IMAGE_NAME }}:$IMAGE_TAG
-        docker build -f .infra/docker/Dockerfile . --target fpm_server -t $FPM_IMAGE
-        docker push $FPM_IMAGE
-        echo "FPM_IMAGE=$FPM_IMAGE" >> $GITHUB_ENV
-
     - name: Secrets Manager
       id: secrets
       uses: aws-actions/aws-secretsmanager-get-secrets@v2
@@ -71,14 +62,13 @@ jobs:
 
     - name: Deploy k8s
       run: |
-        sed -i 's|{$image_fpm_server}|'$FPM_IMAGE'|g' .infra/k8s/fpm/deployment.yml
-        kubectl apply -f .infra/k8s/webserver
         kubectl apply -f .infra/k8s/fpm
+        kubectl apply -f .infra/k8s/webserver
 
     - name: Verificar rollout
       run: |
-        kubectl rollout status deployment/deployment-webserver
         kubectl rollout status deployment/deployment-fpm
+        kubectl rollout status deployment/deployment-webserver
 
     - name: IP externo
       run: |
