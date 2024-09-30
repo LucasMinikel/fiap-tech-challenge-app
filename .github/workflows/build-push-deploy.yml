@@ -33,20 +33,23 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Build e push das imagens Docker
+    - name: WEBSERVER_IMAGE - Build e push das imagens Docker
+      env:
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        WEBSERVER_IMAGE=${{ secrets.DOCKER_USERNAME }}/${{ env.WEBSERVER_IMAGE_NAME }}:$IMAGE_TAG
+        docker build -f .infra/docker/Dockerfile . --target web_server -t $WEBSERVER_IMAGE
+        docker push $WEBSERVER_IMAGE
+        echo "WEBSERVER_IMAGE=$WEBSERVER_IMAGE" >> $GITHUB_ENV
+
+    - name: FPM_IMAGE - Build e push das imagens Docker
       env:
         IMAGE_TAG: ${{ github.sha }}
       run: |
         FPM_IMAGE=${{ secrets.DOCKER_USERNAME }}/${{ env.FPM_IMAGE_NAME }}:$IMAGE_TAG
-        WEBSERVER_IMAGE=${{ secrets.DOCKER_USERNAME }}/${{ env.WEBSERVER_IMAGE_NAME }}:$IMAGE_TAG
-        
-        docker build -f .infra/docker/Dockerfile . --target web_server -t $WEBSERVER_IMAGE
-        docker push $WEBSERVER_IMAGE
         docker build -f .infra/docker/Dockerfile . --target fpm_server -t $FPM_IMAGE
         docker push $FPM_IMAGE
-        
         echo "FPM_IMAGE=$FPM_IMAGE" >> $GITHUB_ENV
-        echo "WEBSERVER_IMAGE=$WEBSERVER_IMAGE" >> $GITHUB_ENV
 
     - name: Secrets Manager
       id: secrets
