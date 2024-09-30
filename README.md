@@ -19,8 +19,9 @@ Este projeto utiliza GitHub Actions para automatizar o processo de build, push e
 
 Faça um fork deste repositório para sua conta do GitHub.
 
-### 2. Criar um Usuário com Permissões no AWS
-Crie um usuário no AWS IAM com as permissões necessárias para a acessar e aplicar a configuração do cluster, utilizando a política abaixo. Lembre-se de gerar uma chave de acesso para este usuário.
+### 2. Adicionar Política ao Usuário que Criou o Cluster
+> **Importante:** Não crie um novo usuário, utilize o mesmo que foi usado para a criação do cluster.
+Adicione as permissões necessárias para acessar e aplicar a configuração do cluster utilizando a política abaixo. Lembre-se de gerar uma nova.
 
 Política IAM (JSON)
 ```json
