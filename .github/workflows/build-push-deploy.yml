@@ -40,10 +40,10 @@ jobs:
         FPM_IMAGE=${{ secrets.DOCKER_USERNAME }}/${{ env.FPM_IMAGE_NAME }}:$IMAGE_TAG
         WEBSERVER_IMAGE=${{ secrets.DOCKER_USERNAME }}/${{ env.WEBSERVER_IMAGE_NAME }}:$IMAGE_TAG
         
-        docker build -f .infra/docker/Dockerfile . --target fpm_server -t $FPM_IMAGE
-        docker push $FPM_IMAGE
         docker build -f .infra/docker/Dockerfile . --target web_server -t $WEBSERVER_IMAGE
         docker push $WEBSERVER_IMAGE
+        docker build -f .infra/docker/Dockerfile . --target fpm_server -t $FPM_IMAGE
+        docker push $FPM_IMAGE
         
         echo "FPM_IMAGE=$FPM_IMAGE" >> $GITHUB_ENV
         echo "WEBSERVER_IMAGE=$WEBSERVER_IMAGE" >> $GITHUB_ENV
@@ -53,7 +53,7 @@ jobs:
       uses: aws-actions/aws-secretsmanager-get-secrets@v2
       with:
         secret-ids: |
-          MY_AWS_SECRET
+          db_rds_secrets
           tech-challenge-cognito-api-url
         parse-json-secrets: true
 
@@ -67,10 +67,11 @@ jobs:
     - name: Criar ou Atualizar Secrets no Kubernetes
       run: |
         kubectl create secret generic secret-common \
-          --from-literal=DB_HOST=${{ env.MY_AWS_SECRET_DB_HOST }} \
-          --from-literal=DB_USERNAME=${{ env.MY_AWS_SECRET_DB_USERNAME }} \
-          --from-literal=DB_PASSWORD=${{ env.MY_AWS_SECRET_DB_PASSWORD }} \
-          --from-literal=DB_DATABASE=${{ env.MY_AWS_SECRET_DB_DATABASE }} \
+          --from-literal=DB_HOST=${{ env.db_rds_secrets_DB_HOST }} \
+          --from-literal=DB_PORT=${{ env.db_rds_secrets_DB_PORT }} \
+          --from-literal=DB_USERNAME=${{ env.db_rds_secrets_DB_USERNAME }} \
+          --from-literal=DB_PASSWORD=${{ env.db_rds_secrets_DB_PASSWORD }} \
+          --from-literal=DB_DATABASE=${{ env.db_rds_secrets_DB_DATABASE }} \
           --from-literal=COGNITO_API_URL=${{ env.TECH_CHALLENGE_COGNITO_API_URL }} \
           --dry-run=client -o yaml | kubectl apply -f -
 
