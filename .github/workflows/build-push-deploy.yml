@@ -70,11 +70,11 @@ jobs:
     - name: Criar ou Atualizar Secrets no Kubernetes
       run: |
         kubectl create secret generic secret-common \
-          --from-literal=DB_HOST=${{ env.db_rds_secrets_DB_HOST }} \
-          --from-literal=DB_PORT=${{ env.db_rds_secrets_DB_PORT }} \
-          --from-literal=DB_USERNAME=${{ env.db_rds_secrets_DB_USERNAME }} \
-          --from-literal=DB_PASSWORD=${{ env.db_rds_secrets_DB_PASSWORD }} \
-          --from-literal=DB_DATABASE=${{ env.db_rds_secrets_DB_DATABASE }} \
+          --from-literal=DB_HOST=${{ env.DB_RDS_SECRETS_DB_HOST }} \
+          --from-literal=DB_PORT=${{ env.DB_RDS_SECRETS_DB_PORT }} \
+          --from-literal=DB_USERNAME=${{ env.DB_RDS_SECRETS_DB_USERNAME }} \
+          --from-literal=DB_PASSWORD=${{ env.DB_RDS_SECRETS_DB_PASSWORD }} \
+          --from-literal=DB_DATABASE=${{ env.DB_RDS_SECRETS_DB_DATABASE }} \
           --from-literal=COGNITO_API_URL=${{ env.TECH_CHALLENGE_COGNITO_API_URL }} \
           --dry-run=client -o yaml | kubectl apply -f -
 
