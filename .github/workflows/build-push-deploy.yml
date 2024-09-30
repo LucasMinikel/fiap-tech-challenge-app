@@ -10,7 +10,7 @@ env:
   AWS_REGION: sa-east-1
   CLUSTER_NAME: tech-challenge-cluster
   FPM_IMAGE_NAME: fpm_server
-  WEBSERVER_IMAGE_NAME: webserver
+  WEBSERVER_IMAGE_NAME: web_server
 
 jobs:
   build-push-deploy:
