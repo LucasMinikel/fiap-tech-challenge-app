@@ -7,12 +7,18 @@ use TechChallenge\Application\UseCase\Order\Checkout as UseCaseOrderCheckout;
 
 final class Checkout
 {
-    public function __construct(private readonly AbstractFactoryRepository $AbstractFactoryRepository)
-    {
-    }
+    public function __construct(private readonly AbstractFactoryRepository $AbstractFactoryRepository) {}
 
-    public function execute(?string $id)
+    public function execute(?string $id): void
     {
-        return (new UseCaseOrderCheckout($this->AbstractFactoryRepository))->execute($id);
+        $OrderRepository = $this->AbstractFactoryRepository->createOrderRepository();
+
+        $order = (new UseCaseOrderCheckout(
+            $OrderRepository,
+            $this->AbstractFactoryRepository->getDAO()->createOrderDAO()
+        ))
+            ->execute($id);
+
+        $OrderRepository->update($order);
     }
 }

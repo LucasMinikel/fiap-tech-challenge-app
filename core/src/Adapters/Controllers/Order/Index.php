@@ -8,13 +8,14 @@ use TechChallenge\Adapters\Presenters\Order\ToArray as PresenterOrderToArray;
 
 final class Index
 {
-    public function __construct(private readonly AbstractFactoryRepository $AbstractFactoryRepository)
-    {
-    }
+    public function __construct(private readonly AbstractFactoryRepository $AbstractFactoryRepository) {}
 
-    public function execute(array $filters = [])
+    public function execute(array $filters = []): array
     {
-        $results = (new UseCaseOrderIndex($this->AbstractFactoryRepository))->execute($filters, true);
+        $results = (new UseCaseOrderIndex(
+            $this->AbstractFactoryRepository->createOrderRepository()
+        ))
+            ->execute($filters, true);
 
         $presenter = new PresenterOrderToArray();
 

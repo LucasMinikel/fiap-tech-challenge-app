@@ -2,7 +2,6 @@
 
 namespace TechChallenge\Application\UseCase\Order;
 
-use TechChallenge\Domain\Shared\AbstractFactory\Repository as AbstractFactoryRepository;
 use TechChallenge\Domain\Customer\Exceptions\CustomerNotFoundException;
 use TechChallenge\Domain\Order\Repository\IOrder as IOrderRepository;
 use TechChallenge\Domain\Product\Repository\IProduct as IProductRepository;
@@ -15,33 +14,19 @@ use TechChallenge\Domain\Order\DAO\IOrder as IOrderDAO;
 use TechChallenge\Domain\Customer\DAO\ICustomer as ICustomerDAO;
 use TechChallenge\Domain\Product\DAO\IProduct as IProductDAO;
 use TechChallenge\Domain\Order\SimpleFactory\Item as SimpleFactoryOrderItem;
+use TechChallenge\Domain\Order\Entities\Order;
 
 final class Update
 {
-    private readonly IOrderDAO $OrderDAO;
+    public function __construct(
+        private readonly IOrderRepository $OrderRepository,
+        private readonly IProductRepository $ProductRepository,
+        private readonly IOrderDAO $OrderDAO,
+        private readonly ICustomerDAO $CustomerDAO,
+        private readonly IProductDAO $ProductDAO
+    ) {}
 
-    private readonly ICustomerDAO $CustomerDAO;
-
-    private readonly IProductDAO $ProductDAO;
-
-    private readonly IOrderRepository $OrderRepository;
-
-    private readonly IProductRepository $ProductRepository;
-
-    public function __construct(AbstractFactoryRepository $AbstractFactoryRepository)
-    {
-        $this->OrderDAO = $AbstractFactoryRepository->getDAO()->createOrderDAO();
-
-        $this->CustomerDAO = $AbstractFactoryRepository->getDAO()->createCustomerDAO();
-
-        $this->ProductDAO = $AbstractFactoryRepository->getDAO()->createProductDAO();
-
-        $this->OrderRepository = $AbstractFactoryRepository->createOrderRepository();
-
-        $this->ProductRepository = $AbstractFactoryRepository->createProductRepository();
-    }
-
-    public function execute(DtoInput $dto): void
+    public function execute(DtoInput $dto): Order
     {
         if (!$dto->id || !$this->OrderDAO->exist(["id" => $dto->id]))
             throw new OrderNotFoundException();
@@ -83,6 +68,6 @@ final class Update
 
         $order->calcTotal();
 
-        $this->OrderRepository->update($order);
+        return $order;
     }
 }

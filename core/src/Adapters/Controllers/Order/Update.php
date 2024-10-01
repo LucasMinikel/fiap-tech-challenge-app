@@ -8,12 +8,21 @@ use TechChallenge\Application\UseCase\Order\Update as UseCaseOrderUpdate;
 
 final class Update
 {
-    public function __construct(private readonly AbstractFactoryRepository $AbstractFactoryRepository)
-    {
-    }
+    public function __construct(private readonly AbstractFactoryRepository $AbstractFactoryRepository) {}
 
-    public function execute(OrderDTOInput $dto)
+    public function execute(OrderDTOInput $dto): void
     {
-        return (new UseCaseOrderUpdate($this->AbstractFactoryRepository))->execute($dto);
+        $OrderRepository = $this->AbstractFactoryRepository->createOrderRepository();
+
+        $order = (new UseCaseOrderUpdate(
+            $OrderRepository,
+            $this->AbstractFactoryRepository->createProductRepository(),
+            $this->AbstractFactoryRepository->getDAO()->createOrderDAO(),
+            $this->AbstractFactoryRepository->getDAO()->createCustomerDAO(),
+            $this->AbstractFactoryRepository->getDAO()->createProductDAO()
+        ))
+            ->execute($dto);
+
+        $OrderRepository->update($order);
     }
 }
