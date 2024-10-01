@@ -28,17 +28,7 @@ final class ChangeStatus
             throw new InvalidStatusOrder();
         }
 
-        if ($status === OrderStatus::IN_PREPARATION) {
-            $order->setAsInPreparation();
-        } else if ($status === OrderStatus::READY) {
-            $order->setAsReady();
-        } else if ($status === OrderStatus::FINISHED) {
-            $order->setAsFinished();
-        } else if ($status === OrderStatus::CANCELED) {
-            $order->setAsCanceled();
-        } else {
-            throw new OrderException("Não é possível alterar o pedido para esse status {$status->value}");
-        }
+        $order->setStatusByStatus($status);
 
         return $order;
     }

@@ -290,4 +290,21 @@ class Order extends StandardEntity
 
         return $this;
     }
+
+    public function setStatusByStatus(OrderStatus $status): self
+    {
+        if ($status === OrderStatus::IN_PREPARATION)
+            return $this->setAsInPreparation();
+
+        if ($status === OrderStatus::READY)
+            return $this->setAsReady();
+
+        if ($status === OrderStatus::FINISHED)
+            return $this->setAsFinished();
+
+        if ($status === OrderStatus::CANCELED)
+            return $this->setAsCanceled();
+
+        throw new OrderException("Não é possível alterar o pedido para esse status {$status->value}");
+    }
 }
