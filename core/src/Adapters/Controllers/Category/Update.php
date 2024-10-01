@@ -8,12 +8,15 @@ use TechChallenge\Application\DTO\Category\DtoInput as CategoryDtoInput;
 
 final class Update
 {
-    public function __construct(private readonly AbstractFactoryRepository $AbstractFactoryRepository)
-    {
-    }
+    public function __construct(private readonly AbstractFactoryRepository $AbstractFactoryRepository) {}
 
     public function execute(CategoryDtoInput $dto)
     {
-        return (new UseCaseCategoryUpdate($this->AbstractFactoryRepository))->execute($dto);
+        $category = (new UseCaseCategoryUpdate(
+            $this->AbstractFactoryRepository->getDAO()->createCategoryDAO()
+        ))
+            ->execute($dto);
+
+        $this->AbstractFactoryRepository->createCategoryRepository()->update($category);
     }
 }

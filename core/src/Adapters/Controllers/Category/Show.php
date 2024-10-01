@@ -8,13 +8,15 @@ use TechChallenge\Adapters\Presenters\Category\ToArray as PresenterCategoryToArr
 
 final class Show
 {
-    public function __construct(private readonly AbstractFactoryRepository $AbstractFactoryRepository)
-    {
-    }
+    public function __construct(private readonly AbstractFactoryRepository $AbstractFactoryRepository) {}
 
     public function execute(string $id)
     {
-        $category = (new UseCaseCategoryShow($this->AbstractFactoryRepository))->execute($id);
+        $category = (new UseCaseCategoryShow(
+            $this->AbstractFactoryRepository->createCategoryRepository(),
+            $this->AbstractFactoryRepository->getDAO()->createCategoryDAO()
+        ))
+            ->execute($id);
 
         return (new PresenterCategoryToArray())->execute($category);
     }

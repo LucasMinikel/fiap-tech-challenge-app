@@ -7,12 +7,18 @@ use TechChallenge\Application\UseCase\Category\Delete as UseCaseCategoryDelete;
 
 final class Delete
 {
-    public function __construct(private readonly AbstractFactoryRepository $AbstractFactoryRepository)
-    {
-    }
+    public function __construct(private readonly AbstractFactoryRepository $AbstractFactoryRepository) {}
 
     public function execute(string $id)
     {
-        return (new UseCaseCategoryDelete($this->AbstractFactoryRepository))->execute($id);
+        $CategoryRepository = $this->AbstractFactoryRepository->createCategoryRepository();
+
+        $category = (new UseCaseCategoryDelete(
+            $CategoryRepository,
+            $this->AbstractFactoryRepository->getDAO()->createCategoryDAO()
+        ))
+            ->execute($id);
+
+        $CategoryRepository->delete($category);
     }
 }

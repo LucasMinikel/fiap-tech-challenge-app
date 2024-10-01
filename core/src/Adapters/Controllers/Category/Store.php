@@ -8,12 +8,14 @@ use TechChallenge\Application\DTO\Category\DtoInput as CategoryDtoInput;
 
 final class Store
 {
-    public function __construct(private readonly AbstractFactoryRepository $AbstractFactoryRepository)
-    {
-    }
+    public function __construct(private readonly AbstractFactoryRepository $AbstractFactoryRepository) {}
 
     public function execute(CategoryDtoInput $dto): string
     {
-        return (new UseCaseCategoryStore($this->AbstractFactoryRepository))->execute($dto);
+        $category = (new UseCaseCategoryStore())->execute($dto);
+
+        $this->AbstractFactoryRepository->createCategoryRepository()->store($category);
+
+        return $category->getId();
     }
 }
