@@ -4,7 +4,6 @@ namespace TechChallenge\Application\UseCase\Order;
 
 use TechChallenge\Domain\Order\Enum\OrderStatus;
 use TechChallenge\Domain\Order\Exceptions\InvalidStatusOrder;
-use TechChallenge\Domain\Order\Exceptions\OrderException;
 use TechChallenge\Domain\Order\Exceptions\OrderNotFoundException;
 use TechChallenge\Domain\Order\Repository\IOrder as IOrderRepository;
 use TechChallenge\Domain\Order\DAO\IOrder as IOrderDAO;
