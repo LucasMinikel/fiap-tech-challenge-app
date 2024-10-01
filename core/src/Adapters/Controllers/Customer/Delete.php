@@ -7,12 +7,18 @@ use TechChallenge\Application\UseCase\Customer\Delete as UseCaseCustomerDelete;
 
 final class Delete
 {
-    public function __construct(private readonly AbstractFactoryRepository $AbstractFactoryRepository)
-    {
-    }
+    public function __construct(private readonly AbstractFactoryRepository $AbstractFactoryRepository) {}
 
-    public function execute(string $id)
+    public function execute(string $id): void
     {
-        return (new UseCaseCustomerDelete($this->AbstractFactoryRepository))->execute($id);
+        $CustomerRepository = $this->AbstractFactoryRepository->createCustomerRepository();
+
+        $customer = (new UseCaseCustomerDelete(
+            $CustomerRepository,
+            $this->AbstractFactoryRepository->getDAO()->createCustomerDAO()
+        ))
+            ->execute($id);
+
+        $CustomerRepository->delete($customer);
     }
 }

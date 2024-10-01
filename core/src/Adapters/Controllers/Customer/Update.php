@@ -8,12 +8,15 @@ use TechChallenge\Application\UseCase\Customer\Update as UseCaseCustomerUpdate;
 
 final class Update
 {
-    public function __construct(private readonly AbstractFactoryRepository $AbstractFactoryRepository)
-    {
-    }
+    public function __construct(private readonly AbstractFactoryRepository $AbstractFactoryRepository) {}
 
-    public function execute(CustomerDTOInput $dto)
+    public function execute(CustomerDTOInput $dto): void
     {
-        return (new UseCaseCustomerUpdate($this->AbstractFactoryRepository))->execute($dto);
+        $customer = (new UseCaseCustomerUpdate(
+            $this->AbstractFactoryRepository->getDAO()->createCustomerDAO()
+        ))
+            ->execute($dto);
+
+        $this->AbstractFactoryRepository->createCustomerRepository()->update($customer);
     }
 }
