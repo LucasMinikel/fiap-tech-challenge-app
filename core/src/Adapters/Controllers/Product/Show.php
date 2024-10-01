@@ -8,13 +8,15 @@ use TechChallenge\Adapters\Presenters\Product\ToArray as PresenterProductToArray
 
 final class Show
 {
-    public function __construct(private readonly AbstractFactoryRepository $AbstractFactoryRepository)
-    {
-    }
+    public function __construct(private readonly AbstractFactoryRepository $AbstractFactoryRepository) {}
 
     public function execute(string $id)
     {
-        $product = (new UseCaseProductShow($this->AbstractFactoryRepository))->execute($id);
+        $product = (new UseCaseProductShow(
+            $this->AbstractFactoryRepository->createProductRepository(),
+            $this->AbstractFactoryRepository->getDAO()->createProductDAO()
+        ))
+            ->execute($id);
 
         return (new PresenterProductToArray())->execute($product);
     }

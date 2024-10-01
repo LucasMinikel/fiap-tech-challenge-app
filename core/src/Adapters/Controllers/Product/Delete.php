@@ -7,12 +7,18 @@ use TechChallenge\Application\UseCase\Product\Delete as UseCaseProductDelete;
 
 final class Delete
 {
-    public function __construct(private readonly AbstractFactoryRepository $AbstractFactoryRepository)
-    {
-    }
+    public function __construct(private readonly AbstractFactoryRepository $AbstractFactoryRepository) {}
 
     public function execute(string $id)
     {
-        return (new UseCaseProductDelete($this->AbstractFactoryRepository))->execute($id);
+        $ProductRepository = $this->AbstractFactoryRepository->createProductRepository();
+
+        $product = (new UseCaseProductDelete(
+            $ProductRepository,
+            $this->AbstractFactoryRepository->getDAO()->createProductDAO()
+        ))
+            ->execute($id);
+
+        $ProductRepository->delete($product);
     }
 }

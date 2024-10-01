@@ -8,13 +8,14 @@ use TechChallenge\Adapters\Presenters\Product\ToArray as PresenterProductToArray
 
 final class Index
 {
-    public function __construct(private readonly AbstractFactoryRepository $AbstractFactoryRepository)
-    {
-    }
+    public function __construct(private readonly AbstractFactoryRepository $AbstractFactoryRepository) {}
 
-    public function execute(array $filters = [])
+    public function execute(array $filters = []): array
     {
-        $results = (new UseCaseProductIndex($this->AbstractFactoryRepository))->execute($filters, true);
+        $results = (new UseCaseProductIndex(
+            $this->AbstractFactoryRepository->createProductRepository()
+        ))
+            ->execute($filters, true);
 
         $presenter = new PresenterProductToArray();
 

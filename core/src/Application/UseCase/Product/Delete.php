@@ -4,23 +4,14 @@ namespace TechChallenge\Application\UseCase\Product;
 
 use TechChallenge\Domain\Product\DAO\IProduct as IProductDAO;
 use TechChallenge\Domain\Product\Repository\IProduct as IProductRepository;
-use TechChallenge\Domain\Shared\AbstractFactory\Repository as AbstractFactoryRepository;
 use TechChallenge\Domain\Product\Exceptions\ProductNotFoundException;
+use TechChallenge\Domain\Product\Entities\Product;
 
 final class Delete
 {
-    private IProductRepository $ProductRepository;
+    public function __construct(private readonly IProductRepository $ProductRepository, private readonly IProductDAO $ProductDAO) {}
 
-    private readonly IProductDAO $ProductDAO;
-
-    public function __construct(AbstractFactoryRepository $AbstractFactoryRepository)
-    {
-        $this->ProductDAO = $AbstractFactoryRepository->getDAO()->createProductDAO();
-
-        $this->ProductRepository = $AbstractFactoryRepository->createProductRepository();
-    }
-
-    public function execute(string $id): void
+    public function execute(string $id): Product
     {
         if (!$this->ProductDAO->exist(["id" => $id]))
             throw new ProductNotFoundException();
@@ -29,6 +20,6 @@ final class Delete
 
         $product->delete();
 
-        $this->ProductRepository->delete($product);
+        return $product;
     }
 }
