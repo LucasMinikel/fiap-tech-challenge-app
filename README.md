@@ -2,13 +2,22 @@
 
 Este repositório contém o código do aplicativo (regras de negócio) e os arquivos docker e Kubernetes para aplicação no cluster EKS usando GitHub Actions.
 
-## Link do Vídeo com a explicação e execução do projeto
+## Link do Vídeo com a explicação e execução do projeto - Fase 03
 
-- Kubernetes: [https://youtu.be/lnCMJ50Y4CE](https://youtu.be/lnCMJ50Y4CE)
-- Terraform|Cloud|CICD: Placeholder
+- Vídeo Projeto fase 03: [https://youtu.be/lnCMJ50Y4CE](https://youtu.be/lnCMJ50Y4CE)
+- Cognito + github actions|RDS|EKS|APP|Teste de Integração com o Gognito|Destruir Infra
 
 <a href="https://youtu.be/lnCMJ50Y4CE">
-    <img width="100%" alt="01 Captura de tela" src="https://github.com/user-attachments/assets/dc89700a-d777-4754-ac7f-d2c4b73764de">
+    <img width="100%" alt="fase 03" src="https://github.com/user-attachments/assets/a4a451ad-2cb1-4636-af48-162199709863">
+</a>
+
+## Link do Vídeo com a explicação e execução do projeto - Fase 02
+
+- Kubernetes: [https://youtu.be/lnCMJ50Y4CE](https://youtu.be/pG4ELz6mip8)
+- Terraform|Cloud|CICD: Placeholder
+
+<a href="https://youtu.be/pG4ELz6mip8">
+    <img width="100%" alt="fase 02" src="https://github.com/user-attachments/assets/7124e968-457b-46f4-ae9f-5d9bc42c8dbd">
 </a>
 
 ## Intergrantes - GRUPO 47
