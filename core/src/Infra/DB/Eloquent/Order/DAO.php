@@ -15,7 +15,7 @@ class DAO implements IOrderDAO
 
         $query->whereNotIn('status', ["FINISHED"]);
 
-        $query->orderByRaw("FIELD(status, 'READY', 'IN_PREPARATION', 'RECEIVED')");
+        $query->orderByRaw("FIELD(status, 'READY', 'IN_PREPARATION', 'PAID', 'RECEIVED', 'NEW')");
 
         $query->orderBy('created_at', 'asc');
 
