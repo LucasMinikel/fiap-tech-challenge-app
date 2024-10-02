@@ -4,8 +4,8 @@ Este repositório contém o código do aplicativo (regras de negócio) e os arqu
 
 ## Link do Vídeo com a explicação e execução do projeto
 
-Kubernetes: [https://youtu.be/pG4ELz6mip8](https://youtu.be/pG4ELz6mip8)
-Terraform AWS Cloud: Placeholder
+- Kubernetes: [https://youtu.be/pG4ELz6mip8](https://youtu.be/pG4ELz6mip8)
+- Terraform|Cloud|CICD: Placeholder
 
 <a href="https://youtu.be/pG4ELz6mip8">
     <img width="100%" alt="01 Captura de tela" src="https://github.com/user-attachments/assets/dc89700a-d777-4754-ac7f-d2c4b73764de">
@@ -33,7 +33,7 @@ https://github.com/LucasMinikel/fiap-tech-challenge-cognito
 - RDS
 https://github.com/LucasMinikel/fiap-tech-challenge-rds
 
-EKS
+- EKS
 https://github.com/LucasMinikel/fiap-tech-challenge-eks
 
 ## Visão Geral
