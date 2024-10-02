@@ -4,7 +4,7 @@ Este repositório contém o código do aplicativo (regras de negócio) e os arqu
 
 ## Link do Vídeo com a explicação e execução do projeto
 
-- Kubernetes: [https://youtu.be/pG4ELz6mip8](https://youtu.be/pG4ELz6mip8)
+- Kubernetes: [https://youtu.be/pG4ELz6mip8](https://youtu.be/pG4ELz6mip8) .
 - Terraform|Cloud|CICD: Placeholder
 
 <a href="https://youtu.be/pG4ELz6mip8">
