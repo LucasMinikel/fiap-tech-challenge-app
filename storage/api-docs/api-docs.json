@@ -625,40 +625,6 @@
                             "type": "integer",
                             "example": 100
                         }
-                    },
-                    {
-                        "name": "status[]",
-                        "in": "query",
-                        "description": "Informe os status que deseja que apareçam nos resultados",
-                        "required": false,
-                        "schema": {
-                            "type": "array",
-                            "example": [
-                                "NEW"
-                            ]
-                        }
-                    },
-                    {
-                        "name": "not_status[]",
-                        "in": "query",
-                        "description": "Informe os status que deseja que não apareçam nos resultados",
-                        "required": false,
-                        "schema": {
-                            "type": "array",
-                            "example": [
-                                "CANCELED"
-                            ]
-                        }
-                    },
-                    {
-                        "name": "create_date_sort",
-                        "in": "query",
-                        "description": "Informa a ordenação da listagem pela data da criação do pedido",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "example": "DESC"
-                        }
                     }
                 ],
                 "responses": {
