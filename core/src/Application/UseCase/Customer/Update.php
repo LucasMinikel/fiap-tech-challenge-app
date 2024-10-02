@@ -2,30 +2,20 @@
 
 namespace TechChallenge\Application\UseCase\Customer;
 
-use TechChallenge\Domain\Shared\AbstractFactory\Repository as AbstractFactoryRepository;
 use TechChallenge\Domain\Customer\DAO\ICustomer as ICustomerDAO;
-use TechChallenge\Domain\Customer\Repository\ICustomer as ICustomerRepository;
 use TechChallenge\Domain\Customer\Exceptions\CustomerAlreadyRegistered;
 use TechChallenge\Domain\Customer\Exceptions\CustomerNotFoundException;
 use TechChallenge\Domain\Customer\SimpleFactory\Customer as SimpleFactoryCustomer;
 use TechChallenge\Application\DTO\Customer\DtoInput;
 use TechChallenge\Domain\Customer\ValueObjects\Cpf;
 use DateTime;
+use TechChallenge\Domain\Customer\Entities\Customer;
 
 final class Update
 {
-    private readonly ICustomerDAO $CustomerDAO;
+    public function __construct(private readonly ICustomerDAO $CustomerDAO) {}
 
-    private readonly ICustomerRepository $CustomerRepository;
-
-    public function __construct(AbstractFactoryRepository $AbstractFactoryRepository)
-    {
-        $this->CustomerDAO = $AbstractFactoryRepository->getDAO()->createCustomerDAO();
-
-        $this->CustomerRepository = $AbstractFactoryRepository->createCustomerRepository();
-    }
-
-    public function execute(DtoInput $data): void
+    public function execute(DtoInput $data): Customer
     {
         if (!$this->CustomerDAO->exist(["id" => $data->id]))
             throw new CustomerNotFoundException();
@@ -47,6 +37,6 @@ final class Update
 
         $customer->setUpdatedAt(new DateTime());
 
-        $this->CustomerRepository->update($customer);
+        return $customer;
     }
 }

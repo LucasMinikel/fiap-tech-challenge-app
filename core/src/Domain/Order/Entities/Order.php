@@ -10,6 +10,7 @@ use TechChallenge\Domain\Order\Exceptions\InvalidItemOrder;
 use TechChallenge\Domain\Order\Exceptions\InvalidStatusOrder;
 use TechChallenge\Domain\Order\Exceptions\OrderException;
 use TechChallenge\Domain\Shared\ValueObjects\Price;
+use TechChallenge\Domain\Shared\Facade\Uuid;
 
 class Order extends StandardEntity
 {
@@ -25,7 +26,41 @@ class Order extends StandardEntity
 
     protected array $statusHistory = [];
 
-    protected ?OrderStatus $status = null;
+    public function __construct(
+        protected readonly string $id,
+        protected ?OrderStatus $status,
+        protected readonly DateTime $createdAt,
+        DateTime $updatedAt
+    ) {
+        $this->setUpdatedAt($updatedAt);
+    }
+
+    public static function create(
+        ?string $id = null,
+        ?DateTime $createdAt = null,
+        ?DateTime $updatedAt = null
+    ): static {
+        return new static(
+            id: $id ? $id : Uuid::generate(static::$idPrefix),
+            status: null,
+            createdAt: $createdAt ?? new DateTime(),
+            updatedAt: $updatedAt ?? new DateTime()
+        );
+    }
+
+    public static function restore(
+        string $id,
+        OrderStatus $status,
+        ?DateTime $createdAt = null,
+        ?DateTime $updatedAt = null
+    ): static {
+        return new static(
+            id: $id,
+            status: $status,
+            createdAt: $createdAt ?? new DateTime(),
+            updatedAt: $updatedAt ?? new DateTime()
+        );
+    }
 
     public function delete(): self
     {
@@ -206,7 +241,7 @@ class Order extends StandardEntity
         return $this->getStatus() === OrderStatus::CANCELED;
     }
 
-    public function setStatus(OrderStatus $status): self
+    protected function setStatus(OrderStatus $status): self
     {
         $this->status = $status;
 
@@ -289,5 +324,22 @@ class Order extends StandardEntity
                 $item->delete();
 
         return $this;
+    }
+
+    public function setStatusByStatus(OrderStatus $status): self
+    {
+        if ($status === OrderStatus::IN_PREPARATION)
+            return $this->setAsInPreparation();
+
+        if ($status === OrderStatus::READY)
+            return $this->setAsReady();
+
+        if ($status === OrderStatus::FINISHED)
+            return $this->setAsFinished();
+
+        if ($status === OrderStatus::CANCELED)
+            return $this->setAsCanceled();
+
+        throw new OrderException("Não é possível alterar o pedido para esse status {$status->value}");
     }
 }

@@ -9,13 +9,15 @@ use TechChallenge\Domain\Customer\ValueObjects\Cpf;
 
 final class ShowByCpf
 {
-    public function __construct(private readonly AbstractFactoryRepository $AbstractFactoryRepository)
-    {
-    }
+    public function __construct(private readonly AbstractFactoryRepository $AbstractFactoryRepository) {}
 
     public function execute(string $cpf)
     {
-        $customer = (new UseCaseCustomerShowByCpf($this->AbstractFactoryRepository))->execute(new Cpf($cpf));
+        $customer = (new UseCaseCustomerShowByCpf(
+            $this->AbstractFactoryRepository->createCustomerRepository(),
+            $this->AbstractFactoryRepository->getDAO()->createCustomerDAO()
+        ))
+            ->execute(new Cpf($cpf));
 
         return (new PresenterCustomerToArray())->execute($customer);
     }

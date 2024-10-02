@@ -7,12 +7,18 @@ use TechChallenge\Application\UseCase\Order\Webhook as UseCaseOrderWebhook;
 
 final class Webhook
 {
-    public function __construct(private readonly AbstractFactoryRepository $AbstractFactoryRepository)
-    {
-    }
+    public function __construct(private readonly AbstractFactoryRepository $AbstractFactoryRepository) {}
 
-    public function execute(?string $id)
+    public function execute(?string $id): void
     {
-        (new UseCaseOrderWebhook($this->AbstractFactoryRepository))->execute($id);
+        $OrderRepository = $this->AbstractFactoryRepository->createOrderRepository();
+
+        $order = (new UseCaseOrderWebhook(
+            $OrderRepository,
+            $this->AbstractFactoryRepository->getDAO()->createOrderDAO()
+        ))
+            ->execute($id);
+
+        $OrderRepository->update($order);
     }
 }

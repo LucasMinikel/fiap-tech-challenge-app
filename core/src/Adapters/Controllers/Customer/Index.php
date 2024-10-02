@@ -8,13 +8,11 @@ use TechChallenge\Adapters\Presenters\Customer\ToArray as PresenterCustomerToArr
 
 final class Index
 {
-    public function __construct(private readonly AbstractFactoryRepository $AbstractFactoryRepository)
-    {
-    }
+    public function __construct(private readonly AbstractFactoryRepository $AbstractFactoryRepository) {}
 
-    public function execute(array $filters = [])
+    public function execute(array $filters = []): array
     {
-        $results = (new UseCaseCustomerIndex($this->AbstractFactoryRepository))->execute($filters);
+        $results = (new UseCaseCustomerIndex($this->AbstractFactoryRepository->createCustomerRepository()))->execute($filters);
 
         $presenter = new PresenterCustomerToArray();
 

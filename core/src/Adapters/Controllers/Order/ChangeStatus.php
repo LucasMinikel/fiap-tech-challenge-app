@@ -7,12 +7,18 @@ use TechChallenge\Application\UseCase\Order\ChangeStatus as UseCaseOrderChangeSt
 
 final class ChangeStatus
 {
-    public function __construct(private readonly AbstractFactoryRepository $AbstractFactoryRepository)
-    {
-    }
+    public function __construct(private readonly AbstractFactoryRepository $AbstractFactoryRepository) {}
 
-    public function execute(?string $id, ?string $status)
+    public function execute(?string $id, ?string $status): void
     {
-        return (new UseCaseOrderChangeStatus($this->AbstractFactoryRepository))->execute($id, $status);
+        $OrderRepository = $this->AbstractFactoryRepository->createOrderRepository();
+
+        $order = (new UseCaseOrderChangeStatus(
+            $OrderRepository,
+            $this->AbstractFactoryRepository->getDAO()->createOrderDAO()
+        ))
+            ->execute($id, $status);
+
+        $OrderRepository->update($order);
     }
 }

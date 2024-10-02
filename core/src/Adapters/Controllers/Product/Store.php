@@ -8,12 +8,14 @@ use TechChallenge\Application\UseCase\Product\Store as UseCaseProductStore;
 
 final class Store
 {
-    public function __construct(private readonly AbstractFactoryRepository $AbstractFactoryRepository)
-    {
-    }
+    public function __construct(private readonly AbstractFactoryRepository $AbstractFactoryRepository) {}
 
-    public function execute(ProductDTOInput $dto)
+    public function execute(ProductDTOInput $dto): string
     {
-        return (new UseCaseProductStore($this->AbstractFactoryRepository))->execute($dto);
+        $product = (new UseCaseProductStore($this->AbstractFactoryRepository->getDAO()->createCategoryDAO()))->execute($dto);
+
+        $this->AbstractFactoryRepository->createProductRepository()->store($product);
+
+        return $product->getId();
     }
 }

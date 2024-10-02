@@ -8,12 +8,14 @@ use TechChallenge\Application\UseCase\Customer\Store as UseCaseCustomerStore;
 
 final class Store
 {
-    public function __construct(private readonly AbstractFactoryRepository $AbstractFactoryRepository)
-    {
-    }
+    public function __construct(private readonly AbstractFactoryRepository $AbstractFactoryRepository) {}
 
-    public function execute(CustomerDTOInput $dto)
+    public function execute(CustomerDTOInput $dto): string
     {
-        return (new UseCaseCustomerStore($this->AbstractFactoryRepository))->execute($dto);
+        $customer = (new UseCaseCustomerStore($this->AbstractFactoryRepository->getDAO()->createCustomerDAO()))->execute($dto);
+
+        $this->AbstractFactoryRepository->createCustomerRepository()->store($customer);
+
+        return $customer->getId();
     }
 }

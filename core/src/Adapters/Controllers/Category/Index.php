@@ -8,13 +8,11 @@ use TechChallenge\Adapters\Presenters\Category\ToArray as PresenterCategoryToArr
 
 final class Index
 {
-    public function __construct(private readonly AbstractFactoryRepository $AbstractFactoryRepository)
-    {
-    }
+    public function __construct(private readonly AbstractFactoryRepository $AbstractFactoryRepository) {}
 
     public function execute(array $filters = [])
     {
-        $results = (new UseCaseCategoryIndex($this->AbstractFactoryRepository))->execute($filters);
+        $results = (new UseCaseCategoryIndex($this->AbstractFactoryRepository->createCategoryRepository()))->execute($filters);
 
         $presenter = new PresenterCategoryToArray();
 

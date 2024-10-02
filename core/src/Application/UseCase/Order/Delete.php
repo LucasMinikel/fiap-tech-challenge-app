@@ -2,26 +2,17 @@
 
 namespace TechChallenge\Application\UseCase\Order;
 
-use TechChallenge\Domain\Shared\AbstractFactory\Repository as AbstractFactoryRepository;
 use TechChallenge\Domain\Order\Exceptions\OrderException;
 use TechChallenge\Domain\Order\Exceptions\OrderNotFoundException;
 use TechChallenge\Domain\Order\Repository\IOrder as IOrderRepository;
 use TechChallenge\Domain\Order\DAO\IOrder as IOrderDAO;
+use TechChallenge\Domain\Order\Entities\Order;
 
 final class Delete
 {
-    private readonly IOrderRepository $OrderRepository;
+    public function __construct(private readonly IOrderRepository $OrderRepository, private readonly IOrderDAO $OrderDAO) {}
 
-    private readonly IOrderDAO $OrderDAO;
-
-    public function __construct(AbstractFactoryRepository $AbstractFactoryRepository)
-    {
-        $this->OrderRepository = $AbstractFactoryRepository->createOrderRepository();
-
-        $this->OrderDAO = $AbstractFactoryRepository->getDAO()->createOrderDAO();
-    }
-
-    public function execute(?string $id): void
+    public function execute(?string $id): Order
     {
         if (!$id || !$this->OrderDAO->exist(["id" => $id]))
             throw new OrderNotFoundException();
@@ -33,6 +24,6 @@ final class Delete
 
         $order->delete();
 
-        $this->OrderRepository->delete($order);
+        return $order;
     }
 }

@@ -8,12 +8,16 @@ use TechChallenge\Application\UseCase\Product\Update as UseCaseProductUpdate;
 
 final class Update
 {
-    public function __construct(private readonly AbstractFactoryRepository $AbstractFactoryRepository)
-    {
-    }
+    public function __construct(private readonly AbstractFactoryRepository $AbstractFactoryRepository) {}
 
-    public function execute(ProductDTOInput $dto)
+    public function execute(ProductDTOInput $dto): void
     {
-        return (new UseCaseProductUpdate($this->AbstractFactoryRepository))->execute($dto);
+        $product = (new UseCaseProductUpdate(
+            $this->AbstractFactoryRepository->getDAO()->createProductDAO(),
+            $this->AbstractFactoryRepository->getDAO()->createCategoryDAO()
+        ))
+            ->execute($dto);
+
+        $this->AbstractFactoryRepository->createProductRepository()->update($product);
     }
 }

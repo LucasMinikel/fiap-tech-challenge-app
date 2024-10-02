@@ -5,31 +5,20 @@ namespace TechChallenge\Application\UseCase\Product;
 use TechChallenge\Domain\Category\Exceptions\CategoryNotFoundException;
 use TechChallenge\Domain\Category\DAO\ICategory as ICategoryDAO;
 use TechChallenge\Domain\Product\DAO\IProduct as IProductDAO;
-use TechChallenge\Domain\Shared\AbstractFactory\Repository as AbstractFactoryRepository;
 use TechChallenge\Domain\Product\SimpleFactory\Product as FactorySimpleProduct;
-use TechChallenge\Domain\Product\Repository\IProduct as IProductRepository;
 use TechChallenge\Application\DTO\Product\DtoInput;
 use TechChallenge\Domain\Product\Exceptions\ProductNotFoundException;
 use DateTime;
+use TechChallenge\Domain\Product\Entities\Product;
 
 final class Update
 {
-    private readonly IProductRepository $ProductRepository;
+    public function __construct(
+        private readonly IProductDAO $ProductDAO,
+        private readonly ICategoryDAO $CategoryDAO
+    ) {}
 
-    private readonly IProductDAO $ProductDAO;
-
-    private readonly ICategoryDAO $CategoryDAO;
-
-    public function __construct(AbstractFactoryRepository $AbstractFactoryRepository)
-    {
-        $this->ProductDAO = $AbstractFactoryRepository->getDAO()->createProductDAO();
-
-        $this->ProductRepository = $AbstractFactoryRepository->createProductRepository();
-
-        $this->CategoryDAO = $AbstractFactoryRepository->getDAO()->createCategoryDAO();
-    }
-
-    public function execute(DtoInput $data): void
+    public function execute(DtoInput $data): Product
     {
         if (!$this->ProductDAO->exist(["id" => $data->id]))
             throw new ProductNotFoundException();
@@ -48,6 +37,6 @@ final class Update
 
         $product->setUpdatedAt(new DateTime());
 
-        $this->ProductRepository->update($product);
+        return $product;
     }
 }

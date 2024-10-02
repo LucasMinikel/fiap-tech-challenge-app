@@ -3,26 +3,16 @@
 namespace TechChallenge\Application\UseCase\Product;
 
 use TechChallenge\Domain\Category\Exceptions\CategoryNotFoundException;
-use TechChallenge\Domain\Shared\AbstractFactory\Repository as AbstractFactoryRepository;
 use TechChallenge\Domain\Product\SimpleFactory\Product as FactorySimpleProduct;
-use TechChallenge\Domain\Product\Repository\IProduct as IProductRepository;
 use TechChallenge\Domain\Category\DAO\ICategory as ICategoryDAO;
 use TechChallenge\Application\DTO\Product\DtoInput;
+use TechChallenge\Domain\Product\Entities\Product;
 
 final class Store
 {
-    private IProductRepository $ProductRepository;
+    public function __construct(private readonly ICategoryDAO $CategoryDAO) {}
 
-    private ICategoryDAO $CategoryDAO;
-
-    public function __construct(AbstractFactoryRepository $AbstractFactoryRepository)
-    {
-        $this->ProductRepository = $AbstractFactoryRepository->createProductRepository();
-
-        $this->CategoryDAO = $AbstractFactoryRepository->getDAO()->createCategoryDAO();
-    }
-
-    public function execute(DtoInput $data): string
+    public function execute(DtoInput $data): Product
     {
         $productFactory = (new FactorySimpleProduct())
             ->new()
@@ -34,10 +24,6 @@ final class Store
             $productFactory->withCategoryId($data->categoryId);
         }
 
-        $product = $productFactory->build();
-
-        $this->ProductRepository->store($product);
-
-        return $product->getId();
+        return $productFactory->build();
     }
 }

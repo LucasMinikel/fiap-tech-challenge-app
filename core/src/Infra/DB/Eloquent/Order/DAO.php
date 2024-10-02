@@ -13,13 +13,19 @@ class DAO implements IOrderDAO
     {
         $query = $this->query($filters, $append);
 
+        $query->whereNotIn('status', ["FINISHED"]);
+
+        $query->orderByRaw("FIELD(status, 'READY', 'IN_PREPARATION', 'RECEIVED')");
+
+        $query->orderBy('created_at', 'asc');
+
         if (!empty($filters["page"]) && !empty($filters["per_page"])) {
 
             $paginator = $query->paginate(perPage: $filters["per_page"], page: $filters["page"]);
 
             $data = $paginator->items();
 
-            $data = array_map(fn ($item) => $item->toArray(), $data);
+            $data = array_map(fn($item) => $item->toArray(), $data);
 
             return [
                 'data' => $data,

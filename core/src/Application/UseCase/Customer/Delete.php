@@ -2,25 +2,16 @@
 
 namespace TechChallenge\Application\UseCase\Customer;
 
-use TechChallenge\Domain\Shared\AbstractFactory\Repository as AbstractFactoryRepository;
 use TechChallenge\Domain\Customer\DAO\ICustomer as ICustomerDAO;
 use TechChallenge\Domain\Customer\Repository\ICustomer as ICustomerRepository;
 use TechChallenge\Domain\Customer\Exceptions\CustomerNotFoundException;
+use TechChallenge\Domain\Customer\Entities\Customer;
 
 final class Delete
 {
-    private readonly ICustomerDAO $CustomerDAO;
+    public function __construct(private readonly ICustomerRepository $CustomerRepository, private readonly ICustomerDAO $CustomerDAO) {}
 
-    private readonly ICustomerRepository $CustomerRepository;
-
-    public function __construct(AbstractFactoryRepository $AbstractFactoryRepository)
-    {
-        $this->CustomerDAO = $AbstractFactoryRepository->getDAO()->createCustomerDAO();
-
-        $this->CustomerRepository = $AbstractFactoryRepository->createCustomerRepository();
-    }
-
-    public function execute(string $id): void
+    public function execute(string $id): Customer
     {
         if (!$this->CustomerDAO->exist(["id" => $id]))
             throw new CustomerNotFoundException();
@@ -29,6 +20,6 @@ final class Delete
 
         $customer->delete();
 
-        $this->CustomerRepository->delete($customer);
+        return $customer;
     }
 }
