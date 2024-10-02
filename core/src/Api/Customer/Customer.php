@@ -52,7 +52,8 @@ class Customer extends Controller
         try {
             $dto = new CustomerDtoInput(null, $request->name, $request->cpf, $request->email);
 
-            $id = (new ControllerCustomerStore($this->AbstractFactoryRepository))->execute($dto);
+            $id = (new ControllerCustomerStore($this->AbstractFactoryRepository))
+                ->execute($dto, config('app.COGNITO_API_URL'));
 
             return $this->return(["id" => $id], 201);
         } catch (DefaultException $e) {

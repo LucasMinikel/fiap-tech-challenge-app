@@ -123,4 +123,6 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+
+    'COGNITO_API_URL' => env('COGNITO_API_URL'),
 ];
