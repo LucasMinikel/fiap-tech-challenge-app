@@ -11,13 +11,30 @@ Terraform AWS Cloud: Placeholder
     <img width="100%" alt="01 Captura de tela" src="https://github.com/user-attachments/assets/dc89700a-d777-4754-ac7f-d2c4b73764de">
 </a>
 
-## INTEGRANTES - GRUPO 47
+## Intergrantes - GRUPO 47
 
 - RM354121 - Lucas
 - RM354259 - Thiago
 - RM353824 - Raphael
 - RM355935 - Lucas
 - RM354852 - Mauro
+
+## Repositórios Relacionados
+
+- Original
+https://github.com/LucasGarbuyo/fiap-tech-challenge
+
+- App
+https://github.com/LucasMinikel/fiap-tech-challenge-app
+
+- Cognito
+https://github.com/LucasMinikel/fiap-tech-challenge-cognito
+
+- RDS
+https://github.com/LucasMinikel/fiap-tech-challenge-rds
+
+EKS
+https://github.com/LucasMinikel/fiap-tech-challenge-eks
 
 ## Visão Geral
 
